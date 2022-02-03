@@ -10,11 +10,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyFirstApplication">
         <activity android:name=".DisplayMessageActivity"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:exported="false">
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
+
+                <intent-filter>
+                    <action android:name="android.intent.action.SEND" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <data android:mimeType="text/plain" />
+                </intent-filter>
+
         </activity>
         <activity
             android:name=".MainActivity"
