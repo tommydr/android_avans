@@ -28,6 +28,13 @@ public class DetailFragment extends Fragment {
 
         textView = view.findViewById(R.id.textView);
         imageView = view.findViewById(R.id.imageView);
+
+        if (getArguments() != null)
+        {
+            String pokemon = getArguments().getString("Pokemon");
+            setPokemon(pokemon);
+        }
+
         return view;
     }
 
