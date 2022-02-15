@@ -4,10 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,4 +32,34 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, PokemonService.class);
         startService(intent);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(PokemonService.POKEMON_BROADCAST);
+
+        registerReceiver(receiver, filter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        unregisterReceiver(receiver);
+    }
+
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int favorite = intent.getIntExtra("favorite", 0);
+
+            TextView textView = findViewById(R.id.textView);
+            ImageView imageView = findViewById(R.id.imageView);
+
+            textView.setText(PokemonService.getName(favorite));
+            imageView.setImageResource(PokemonService.getIcon(favorite));
+        }
+    };
 }

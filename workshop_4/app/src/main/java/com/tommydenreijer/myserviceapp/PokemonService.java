@@ -4,12 +4,15 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.IBinder;
+import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
 
@@ -18,6 +21,7 @@ import java.util.Random;
 public class PokemonService extends Service {
     int favorite;
     int POKEMON_NOTIFICATION = 123456;
+    static String POKEMON_BROADCAST = "POKEMON_BROADCAST";
 
     public PokemonService() {
     }
@@ -76,7 +80,7 @@ public class PokemonService extends Service {
                 favorite = (favorite + 1 + new Random().nextInt(2)) % 3;
                 sendNotification();
                 sendBroadcast();
-                //updateWidget();
+                updateWidget();
                 int FIVE_SECONDS = 5000;
                 handler.postDelayed(this, FIVE_SECONDS);
             }
@@ -92,6 +96,24 @@ public class PokemonService extends Service {
     }
 
     void sendBroadcast(){
-        Intent intent = new Intent()
+        Intent intent = new Intent();
+        intent.putExtra("favorite", favorite);
+        intent.setAction(POKEMON_BROADCAST);
+
+        sendBroadcast(intent);
+    }
+
+    void updateWidget(){
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pending = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        RemoteViews remoteViews = new RemoteViews(this.getPackageName(), R.layout.pokemon_widget);
+        remoteViews.setImageViewResource(R.id.image_view, getIcon(favorite));
+        remoteViews.setOnClickPendingIntent(R.id.image_view, pending);
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this.getApplicationContext());
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, PokemonWidget.class));
+
+        appWidgetManager.updateAppWidget(appWidgetIds, remoteViews);
     }
 }
