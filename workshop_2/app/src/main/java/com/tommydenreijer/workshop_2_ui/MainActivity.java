@@ -2,6 +2,8 @@ package com.tommydenreijer.workshop_2_ui;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +13,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,21 +24,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String[] myStringArray = { "Bulbasaur", "Dragonite", "Pikachu" } ;
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, myStringArray);
-        ListView listView = (ListView) findViewById(R.id.list_view);
-        listView.setAdapter(adapter);
+        List<Pokemon> pokemons = new ArrayList<>();
+        pokemons.add(new Pokemon(R.drawable.pikachu, "pikachu"));
+        pokemons.add(new Pokemon(R.drawable.bullbasur, "bullbasaur"));
+        pokemons.add(new Pokemon(R.drawable.dragonite, "dragonite"));
 
-        AdapterView.OnItemClickListener mMessageClickedHandler = new
-                AdapterView.OnItemClickListener() {
-                    public void onItemClick(AdapterView parent, View v, int position, long id)
-                    {
-                        String message = adapter.getItem(position);
-                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
-                    }
-                };
-        listView.setOnItemClickListener(mMessageClickedHandler);
+        PokemonAdapter adapter = new PokemonAdapter(pokemons);
+
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+
 
     }
 }
